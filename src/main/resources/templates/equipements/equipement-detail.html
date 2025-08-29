@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Détail de l'équipement'</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    </head>
+    <body class="container mt-4">
+        <!-- Inclusion du menu -->
+        <div th:replace="nav/menu :: navbar"></div>
+
+        <h2>Détails de l'équipement : [[${equipement.nom}]]</h2>
+
+        <h4>Salles disposant l'équipement</h4>
+        <table class="table table-striped mt-3">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Capacité</th>
+                <th>Date début</th>
+                <th>Date fin</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="se : ${equipement.salleEquipements}">
+                <td th:text="${se.salle.id}"></td>
+                <td th:text="${se.salle.nom}"></td>
+                <td th:text="${se.salle.capacite}"></td>
+                <td th:text="${#temporals.format(se.dateDebut, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${#temporals.format(se.dateFin, 'dd/MM/yyyy HH:mm')}"></td>
+                <td class="d-flex gap-2 align-items-center">
+                    <a th:href="@{'/equipements/form/' + ${equipement.id}}" class="btn btn-warning btn-sm">Modifier</a>
+                    <a th:href="@{'/salle-equipements/delete/' + ${se.id}}" class="btn btn-danger btn-sm">Retirer</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h3>Ajouter cet équipement dans une autre salle</h3>
+        <!--/*@thymesVar id="salleEquipement" type="sn.estm.examen.entites.SalleEquipement"*/-->
+        <form th:action="@{'/salle-equipements/saveEqui'}" method="post" class="mt-3"
+              th:object="${salleEquipement}">
+            <div class="form-group">
+                <input type="hidden" th:name="equipement.id" th:value="${equipement.id}" class="form-control" />
+                <label>Nom de la salle :</label>
+                <select th:name="'salle.id'" class="form-select" required>
+                    <option value="" disabled selected>-- Choisir une salle --</option>
+                    <option th:each="u : ${salles}"
+                            th:value="${u.id}"
+                            th:text="${u.nom}">
+                    </option>
+                </select>
+                <br>
+                <label>Date début :</label>
+                <input type="datetime-local" th:name="dateDebut" class="form-control" required/><br>
+
+                <label>Date fin :</label>
+                <input type="datetime-local" th:name="dateFin" class="form-control" required/><br>
+
+            </div>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+            <a href="/equipements" class="btn btn-secondary">Retour</a>
+        </form>
+
+
+    </body>
+</html>
